@@ -4,7 +4,7 @@
 
 .PHONY = all clean
 
-CC = g++			# compiler to use
+CC = clang++ -std=c++17			# compiler to use
 
 LINKERFLAG = -lm
 
