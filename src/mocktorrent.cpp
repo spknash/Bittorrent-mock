@@ -8,6 +8,10 @@ int main(){
     piece sample_piece;
     decoder.decode(0, sample_piece);
     std::cout << "value of code is(should be 123): " << sample_piece.bint.int_val << std::endl;
+    std::shared_ptr<piece> ptr_piece = std::make_shared<piece>(sample_piece);
+    Encode encoder(ptr_piece);
+    std::string encoded_val = encoder.encode();
+    std::cout << "value of back to encoded is: " << encoded_val << std::endl;
     // test 2
     std::cout << "Processing byte sequence: " << "5:hello" << std::endl;
     Decode decoder2("5:hello");

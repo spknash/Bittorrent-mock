@@ -103,11 +103,12 @@ public:
 
 class Encode {
 private:
-    std::string byteSequence;
+    std::shared_ptr<piece> decoded_piece;
 
 public:
-    // Constructor that takes a byte sequence
-    Encode(const std::string& inputByteSequence);
+    // Constructor that takes a piece struct
+    Encode(const std::shared_ptr<piece> dp);
     // methods of the class
-    void encode() const;
+    std::string encode() const;
+
 };

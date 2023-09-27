@@ -163,4 +163,30 @@ int Decode::decode(int start_index, piece& result_piece) const {
     
 }
 
+Encode::Encode(const std::shared_ptr<piece> input_piece) 
+    : decoded_piece(input_piece) {}
+
+
+std::string Encode::encode() const{
+    std::string code_builder = "";
+    switch(decoded_piece->type){
+        case Type::ben_int:
+            code_builder += 'i';
+            code_builder += std::to_string(decoded_piece->bint.int_val);
+            code_builder += 'e';
+            break;
+        case Type::ben_str:
+            
+            break;
+        case Type::ben_list:
+            code_builder += 'e';
+            break;
+        case Type::ben_dict:
+            code_builder += 'e';
+            break;
+
+    };
+    return code_builder;
+}
+
 
