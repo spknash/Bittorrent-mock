@@ -103,11 +103,11 @@ public:
 
 class Encode {
 private:
-    std::string byteSequence;
+    //piece encode_piece;
 
 public:
-    // Constructor that takes a byte sequence
-    Encode(const std::string& inputByteSequence);
+    // Constructor that takes nothing
+    Encode();
     // methods of the class
-    void encode() const;
+    std::string encode(piece input_piece) const;
 };

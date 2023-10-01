@@ -163,4 +163,10 @@ int Decode::decode(int start_index, piece& result_piece) const {
     
 }
 
+Encode::Encode() {};
+
+std::string Encode::encode(piece input_piece) const{
+    
+}
+
 
