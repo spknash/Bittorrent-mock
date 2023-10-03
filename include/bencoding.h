@@ -73,6 +73,23 @@ struct piece{
         }
     }
 
+    void reset_union() {
+        switch (type) {
+            case Type::ben_int:
+                bint.~ben_int();
+                break;
+            case Type::ben_str:
+                bstr.~ben_str();
+                break;
+            case Type::ben_list:
+                blist.~ben_list();
+                break;
+            case Type::ben_dict:
+                bdict.~ben_dict();
+                break;
+        }
+    }
+
 };
 
 enum Data_Type {
@@ -94,7 +111,7 @@ public:
     // Constructor that takes a byte sequence
     Decode(const std::string& inputByteSequence);
     // methods of the class
-    int decode(int start_index, piece& result) const;
+    int decode(int start_index, std::shared_ptr<piece> result) const;
     int decode_int(int start_index, ben_int& result) const;
     int decode_str(int start_index, ben_str& result) const;
     int decode_list(int start_index, ben_list& result) const;
@@ -109,5 +126,5 @@ public:
     // Constructor that takes nothing
     Encode();
     // methods of the class
-    std::string encode(piece input_piece) const;
+    std::string encode(piece& input_piece) const;
 };

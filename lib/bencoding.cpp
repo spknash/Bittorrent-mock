@@ -100,8 +100,9 @@ int Decode::decode_list(int start_index, ben_list& result) const{
     std::vector<std::shared_ptr<piece>> list_elements;
     int curr_index = start_index;
     while (byteSequence[curr_index] != 'e'){
-        auto input_piece = std::make_shared<piece>();
-        int next_index = decode(curr_index, *input_piece);
+        //auto input_piece = std::make_shared<piece>();
+        std::shared_ptr<piece> input_piece = std::make_shared<piece>();
+        int next_index = decode(curr_index, input_piece);
         list_elements.push_back(input_piece);
         curr_index = next_index;
     }
@@ -116,9 +117,11 @@ int Decode::decode_dict(int start_index, ben_dict& result) const{
         ben_str res_str;
         
         int next_index = decode_str(curr_index,res_str);
-        auto input_piece = std::make_shared<piece>();
-        int next_next_index = decode(next_index, *input_piece);
+        //auto input_piece = std::make_shared<piece>();
+        std::shared_ptr<piece> input_piece = std::make_shared<piece>();
+        int next_next_index = decode(next_index, input_piece);
         dict_elements[res_str] = input_piece;
+        std::cout << "added entry to dict" << std::endl;
         curr_index = next_next_index;
         //std::cout << "value of curr_index is : " << curr_index << std::endl;
     }
@@ -126,7 +129,7 @@ int Decode::decode_dict(int start_index, ben_dict& result) const{
     return curr_index+1;
 }
 
-int Decode::decode(int start_index, piece& result_piece) const {
+int Decode::decode(int start_index, std::shared_ptr<piece> result_piece) const {
     if (byteSequence.size() <2){
         throw ParseError("Invalid Bencode: too short");
     }
@@ -135,27 +138,36 @@ int Decode::decode(int start_index, piece& result_piece) const {
         //std::cout << "found digit, so string" << std::endl;
         ben_str res;
         int next_index = decode_str(start_index,res);
-        changeType(result_piece, STRING);
-        result_piece.bstr = res;
+        result_piece->type = Type::ben_str;
+        //changeType(result_piece, STRING);
+        result_piece->bstr = res;
         //std::cout << "value returned by decode_str is: " << next_index << std::endl;
         return next_index;
     }else if(first_char == 'i'){
         ben_int res;
         int next_index = decode_int(start_index+1, res);
-        changeType(result_piece, INT);
-        result_piece.bint = res;
+        //changeType(result_piece, INT);
+        result_piece->type = Type::ben_int;
+        result_piece->bint = res;
         return next_index;
     }else if(first_char == 'l'){
         ben_list res;
         int next_index = decode_list(start_index+1,res);
-        changeType(result_piece, LIST);
-        result_piece.blist = res;
+        //changeType(result_piece, LIST);
+        result_piece->type = Type::ben_list;
+        result_piece->blist = res;
         return next_index;
     }else if(first_char == 'd'){
         ben_dict res;
+        std::cout << "before decode dict" << std::endl;
         int next_index = decode_dict(start_index+1,res);
-        changeType(result_piece, DICT);
-        result_piece.bdict = res;
+        std::cout << "after decode dict" << std::endl;
+        //changeType(result_piece, DICT);
+        result_piece->reset_union();
+        result_piece->type = Type::ben_dict;
+        std::cout << "done setting type" << std::endl;
+        result_piece->bdict = res;
+        std::cout << "done setting bdict" << std::endl;
         return next_index;
     }else{
         throw ParseError("Invalid Bencode: no valid start");
@@ -165,7 +177,26 @@ int Decode::decode(int start_index, piece& result_piece) const {
 
 Encode::Encode() {};
 
-std::string Encode::encode(piece input_piece) const{
+std::string Encode::encode(piece& decoded_piece) const{
+    std::string code_builder = "";
+    switch(decoded_piece.type){
+        case Type::ben_int:
+            code_builder += 'i';
+            code_builder += std::to_string(decoded_piece.bint.int_val);
+            code_builder += 'e';
+            break;
+        case Type::ben_str:
+            
+            break;
+        case Type::ben_list:
+            code_builder += 'e';
+            break;
+        case Type::ben_dict:
+            code_builder += 'e';
+            break;
+
+    };
+    return code_builder;
     
 }
 
